@@ -43,9 +43,9 @@ namespace MAC_Vendor_Lookup
         }
         static async Task<string> Vendor_Lookup(string mac_address)
         {
-            var uri = new Uri("http://api.macvendors.com/" + WebUtility.UrlEncode(mac_address));
-            using (var wc = new HttpClient())
-                return await wc.GetStringAsync(uri);
+            HttpClient client = new HttpClient();
+            string uri = await client.GetStringAsync("http://api.macvendors.com/" + mac_address);
+            return uri;
         }
     }
 }
