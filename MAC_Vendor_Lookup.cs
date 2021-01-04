@@ -15,7 +15,9 @@ namespace MAC_Vendor_Lookup
             Program main_program = new Program();
             string mac_addresses = main_program.Get_Mac_Address();
             Console.WriteLine(mac_addresses);
-            Console.WriteLine(Vendor_Lookup(mac_addresses));
+            var data = Vendor_Lookup(mac_addresses);
+            data.Wait();
+            Console.WriteLine(data);
         }
         private string Get_Mac_Address()
         {
@@ -41,11 +43,18 @@ namespace MAC_Vendor_Lookup
             }
             return mac_address;
         }
-        static async Task<string> Vendor_Lookup(string mac_address)
+        private static async Task<string> Vendor_Lookup(string mac_address)
         {
+            /*
             HttpClient client = new HttpClient();
-            string uri = await client.GetStringAsync("http://api.macvendors.com/" + mac_address);
+            var uri = await client.GetStringAsync("http://api.macvendors.com/" + mac_address).ConfigureAwait(false);
             return uri;
+            */
+            {
+                var uri = new Uri("http://api.macvendors.com/" + WebUtility.UrlEncode(mac_address));
+                using (var wc = new HttpClient())
+                    return await wc.GetStringAsync(uri);
+            }
         }
     }
 }
