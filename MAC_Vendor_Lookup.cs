@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.NetworkInformation;
@@ -15,9 +16,7 @@ namespace MAC_Vendor_Lookup
             Program main_program = new Program();
             string mac_addresses = main_program.Get_Mac_Address();
             Console.WriteLine(mac_addresses);
-            var data = Vendor_Lookup(mac_addresses);
-            data.Wait();
-            Console.WriteLine(data);
+            Console.WriteLine(main_program.Vendor_Lookup(mac_addresses));
         }
         private string Get_Mac_Address()
         {
@@ -43,18 +42,29 @@ namespace MAC_Vendor_Lookup
             }
             return mac_address;
         }
-        private static async Task<string> Vendor_Lookup(string mac_address)
+        private string Vendor_Lookup(string mac_address)
         {
+            WebRequest request = WebRequest.Create("http://api.macvendors.com/" + mac_address);
+            WebResponse response = request.GetResponse();
+            Stream data = response.GetResponseStream();
+            string html = String.Empty;
+            using (StreamReader sr = new StreamReader(data))
+            {
+                html = sr.ReadToEnd();
+            }
+            return html;
             /*
             HttpClient client = new HttpClient();
             var uri = await client.GetStringAsync("http://api.macvendors.com/" + mac_address).ConfigureAwait(false);
             return uri;
             */
+            /*
             {
                 var uri = new Uri("http://api.macvendors.com/" + WebUtility.UrlEncode(mac_address));
                 using (var wc = new HttpClient())
                     return await wc.GetStringAsync(uri);
             }
+            */
         }
     }
 }
