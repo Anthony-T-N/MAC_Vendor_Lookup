@@ -1,7 +1,5 @@
 using System;
 using System.Diagnostics;
-using System.IO;
-using System.Net;
 using System.Net.Http;
 using System.Net.NetworkInformation;
 using System.Threading.Tasks;
@@ -43,17 +41,6 @@ namespace MAC_Vendor_Lookup
         }
         private static async Task<string> Vendor_Lookup(string mac_address)
         {
-            /*
-            WebRequest request = WebRequest.Create("http://api.macvendors.com/" + mac_address);
-            WebResponse response = request.GetResponse();
-            Stream data = response.GetResponseStream();
-            string html = String.Empty;
-            using (StreamReader sr = new StreamReader(data))
-            {
-                html = sr.ReadToEnd();
-            }
-            return html;
-            */
             HttpClient client = new HttpClient();
             var uri = await client.GetStringAsync("http://api.macvendors.com/" + mac_address);
             return uri;
